@@ -38,10 +38,12 @@ class Login:
 
     def error(self):
         error_message = self.paths.get_element_text(self.error_msg)
+        self.logger.info(f"Error Message : {error_message}")
         return error_message
     
     def success(self):
         success_message = self.paths.get_element_text(self.success_product_tag)
+        self.logger.info(f"Success Message : {success_message}")
         return success_message
 
     def login(self,username,password):

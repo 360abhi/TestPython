@@ -17,19 +17,27 @@ def execute(sheet_name):
 
     driver = setup_webdriver()
 
-    data = utils.getData(filepath=Read.INPUT_DATA,sheetname=sheet_name)
-    username = str(data['deal_user'].iloc[0])
-    password = str(data['deal_password'].iloc[0])
-    case = str(data['case'].iloc[0])
+    try:
 
-    logger = setup_logger(log_name=username)
-    driver.get("https://www.saucedemo.com/v1/index.html")
-    
-    login = Login(driver=driver,logger=logger)
-    login.login(username=username,password=password)
-    if case == "negative":
-        error = login.error()
-        print(error)
-    else:
-        success = login.success()
-        print(success)
+        data = utils.getData(filepath=Read.INPUT_DATA,sheetname=sheet_name)
+        username = str(data['deal_user'].iloc[0])
+        password = str(data['deal_password'].iloc[0])
+        case = str(data['case'].iloc[0])
+
+        logger = setup_logger(log_name=username)
+        driver.get("https://www.saucedemo.com/v1/index.html")
+
+        login = Login(driver=driver,logger=logger)
+        login.login(username=username,password=password)
+        if case == "negative":
+            error = login.error()
+            return error
+        else:
+            success = login.success()
+            return success
+
+    except Exception as e:
+        print(str(e))
+
+    finally:
+        driver.quit()

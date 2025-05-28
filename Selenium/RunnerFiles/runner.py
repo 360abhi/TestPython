@@ -6,7 +6,12 @@ root = os.path.abspath(os.path.join(curr_dir,'..','..'))
 sys.path.append(root)
 
 from Selenium.Scripts import Runner as run
+from concurrent.futures import ThreadPoolExecutor
 
-# Sheetnames = ["Sheet1","Sheet2","Sheet3"]
+Sheetnames = ["Sheet1","Sheet2","Sheet3"]
 
-run.execute(sheet_name="Sheet1")
+with ThreadPoolExecutor(max_workers=2) as executor:
+    results = executor.map(run.execute, Sheetnames)
+
+    for result in results:
+        print(f"Result :{result}")
