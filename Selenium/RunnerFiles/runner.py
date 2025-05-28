@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 Sheetnames = ["Sheet1","Sheet2","Sheet3"]
 
-with ThreadPoolExecutor(max_workers=2) as executor:
+with ThreadPoolExecutor(max_workers=3) as executor:
     results = executor.map(run.execute, Sheetnames)
 
     for result in results:

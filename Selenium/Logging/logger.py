@@ -3,12 +3,7 @@ import os
 from datetime import datetime
 
 def setup_logger(log_name: str):
-    """
-    Set up a logger with a specific name and log file.
-    
-    :param log_name: Base name for the log file (without extension)
-    :return: Configured logger instance
-    """
+
     # Create logs directory if it doesn't exist
     os.makedirs("logs", exist_ok=True)
     
@@ -28,7 +23,8 @@ def setup_logger(log_name: str):
     ch = logging.StreamHandler()
     ch.setLevel(logging.INFO)
 
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter('%(name)s  %(asctime)s - %(levelname)s - %(message)s')
+
     fh.setFormatter(formatter)
     ch.setFormatter(formatter)
 
