@@ -9,9 +9,13 @@ from Selenium.Scripts import Runner as run
 from concurrent.futures import ThreadPoolExecutor
 
 Sheetnames = ["Sheet1","Sheet2","Sheet3"]
+mydf = []
 
 with ThreadPoolExecutor(max_workers=3) as executor:
     results = executor.map(run.execute, Sheetnames)
 
     for result in results:
         print(f"Result :{result}")
+        mydf.append(result)
+
+print(mydf)

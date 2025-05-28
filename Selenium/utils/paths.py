@@ -1,6 +1,9 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as Ec
+import os
+from docx import Document
+from docx.shared import Inches
 
 class Path_Utils:
 
@@ -62,3 +65,32 @@ class Path_Utils:
         except Exception as e:
             print(str(e))
             return "NO ELEMENT FOUND"
+        
+
+
+
+    def save_screenshot_to_doc(self, filename):
+        # Prepare file names
+        screenshot_path = f"{filename}.png"
+        doc_path = f"{filename}.docx"
+
+        # Take screenshot
+        self.driver.save_screenshot(screenshot_path)
+
+        # Load or create Word document
+        if os.path.exists(doc_path):
+            doc = Document(doc_path)
+        else:
+            doc = Document()
+
+        # Add screenshot image to the document
+        doc.add_paragraph(f"Screenshot added: {screenshot_path}")
+        doc.add_picture(screenshot_path, width=Inches(6))  # Adjust width as needed
+        doc.add_paragraph("")  # Add a blank line for spacing
+
+        # Save the document
+        doc.save(doc_path)
+        os.remove(screenshot_path)
+
+        print(f"Screenshot saved to {screenshot_path} and appended to {doc_path}")
+

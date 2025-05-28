@@ -1,7 +1,8 @@
 import os
 import sys
 from Selenium.utils.paths import Path_Utils
-
+from time import sleep
+from Selenium.utils.ReadData import Read
 
 class Login:
 
@@ -49,4 +50,6 @@ class Login:
     def login(self,username,password):
         self.enterUsername(username=username)
         self.enterPassword(password=password)
+        sleep(0.5)
+        self.paths.save_screenshot_to_doc(filename=f"{Read.SCREENSHOT_FOLDER}{username}")
         self.clickLogin()
