@@ -20,7 +20,7 @@ class Path_Utils:
             return True
         except Exception as e:
             print(str(e))
-            print(f"Exception durint xpath of {xpath}")
+            print(f"Exception during xpath of {xpath}")
             return False
 
     def send_keys_xpath(self,xpath,text:str):
@@ -65,9 +65,6 @@ class Path_Utils:
         except Exception as e:
             print(str(e))
             return "NO ELEMENT FOUND"
-        
-
-
 
     def save_screenshot_to_doc(self, filename):
         # Prepare file names
@@ -85,8 +82,8 @@ class Path_Utils:
 
         # Add screenshot image to the document
         doc.add_paragraph(f"Screenshot added: {screenshot_path}")
-        doc.add_picture(screenshot_path, width=Inches(6))  # Adjust width as needed
-        doc.add_paragraph("")  # Add a blank line for spacing
+        doc.add_picture(screenshot_path, width=Inches(6))  
+        doc.add_paragraph("")  
 
         # Save the document
         doc.save(doc_path)
@@ -94,3 +91,23 @@ class Path_Utils:
 
         print(f"Screenshot saved to {screenshot_path} and appended to {doc_path}")
 
+
+    def append_screenshot(self,filename):
+        screenshot_path = f"{filename}.png"
+        doc_path = f"{filename}.docx"
+
+        self.driver.save_screenshot(screenshot_path)
+
+        if os.path.exists(filename):
+            doc = Document(doc_path)
+        else:
+            doc = Document()
+
+        doc.add_paragraph(f"Screenshot Added {screenshot_path}")
+        doc.add_picture(screenshot_path,width=Inches(6))
+        doc.add_paragraph("")
+
+
+        doc.save(doc_path)
+        os.remove(screenshot_path)
+        print(f"Screenshot appended to {doc_path}")

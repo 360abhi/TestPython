@@ -1,0 +1,12 @@
+
+ Hi im here also
+ Hi im here also
+ Hi im here also
+ Task	Code
+Read Entire File 	with open("file.txt", "r") as f: data = f.read()
+Write File      	with open("file.txt", "w") as f: f.write("text")
+Append to File	   with open("file.txt", "a") as f: f.write("text")
+Check Existence	   os.path.exists("file.txt")
+Delete File	       os.remove("file.txt")
+Read JSON	       json.load(open("data.json"))
+Write JSON	       json.dump(data, open("data.json", "w"))
