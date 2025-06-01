@@ -1,0 +1,33 @@
+Method	Description
+response.status_code	HTTP status code (200, 404, 500, etc.)
+response.text	        Response as a string
+response.json()	       Parse JSON response (raises ValueError if invalid)
+response.headers	   Response headers (dictionary)
+response.cookies	   Session cookies
+response.content	   Raw bytes (for binary data like images)
+
+Q1: What’s the difference between requests.get() and requests.Session()?
+A:
+
+requests.get() creates a new connection each time.
+
+Session() reuses connections (faster for multiple requests, retains cookies/headers).
+
+
+Task	Code
+GET Request	requests.get(url, params, headers)
+POST Request	requests.post(url, data, json, headers)
+Session	session = requests.Session()
+File Download	response.iter_content(chunk_size)
+Error Handling	try/except requests.exceptions.RequestException
+
+Best Practices
+Always check response.status_code before processing.
+
+Use timeout to avoid hanging requests.
+
+Reuse Session() for multiple requests.
+
+Handle exceptions (Timeout, ConnectionError, HTTPError).
+
+Never hardcode secrets (use environment variables).

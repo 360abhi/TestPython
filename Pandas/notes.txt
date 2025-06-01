@@ -1,0 +1,33 @@
+How Filtering Works (Order of Operations)
+
+df[df['Age'] > 25]
+Step 1: Boolean Series Creation
+df['Age'] > 25 generates a True/False Series:
+0    False
+1     True
+2     True
+Name: Age, dtype: bool
+Step 2: Filter Application
+Pandas uses this mask to select rows where the value is True.
+
+
+Key Characteristics:
+Vectorized Operation: The comparison happens all at once (not row-by-row)
+No Row Order Impact: Pandas checks all rows simultaneously, not sequentially
+Memory Efficiency: Creates a boolean mask first, then filters
+
+df.loc[rows, columns]
+Row Selection First: Always processes rows before columns
+Label-Based: Uses index labels (not positions)
+
+
+df.loc[df['Name'] == 'Bob', 'Age'] = 31
+Row Selection: df['Name'] == 'Bob' → Finds row(s) where Name is "Bob"
+Column Selection: 'Age' → Selects the Age column
+Assignment: Sets those cells to 31
+
+# Less flexible (position-based)
+df.iloc[1, 1] = 31  # 2nd row, 2nd column (zero-based)
+
+# More explicit (label-based)
+df.loc[1, 'Age'] = 31  # Row with index label 1, column 'Age'
