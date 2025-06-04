@@ -7,6 +7,7 @@ class Login:
     username_field = "//input[@name='username']"
     password_field = "//input[@name='password']"
     login_button = "(//div[.='Log in'])[last()]"
+    skip = "(//div[.='Not now'])[last()]"
 
     def __init__(self,driver):
         self.driver = driver
@@ -17,7 +18,7 @@ class Login:
         self.paths.send_keys_xpath(self.password_field,password)
         self.paths.click_xpath(self.login_button)
         time.sleep(5)
-        self.paths.click_xpath("(//div[.='Not now'])[last()]")
+        self.paths.click_xpath(self.skip)
         
 
         

@@ -1,3 +1,4 @@
+import pandas as pd
 import requests
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -86,6 +87,23 @@ class Path_Utils:
             # Save the document
             doc.save(doc_path)
 
+    def excel_write(df,path,sheetname):
+        if not os.path.exists(path):
+            with pd.ExcelWriter(path=path,engine='openpyxl') as writer:
+                   df.to_excel(writer,sheet_name=sheetname)
+        else:
+            with pd.ExcelWriter(path=path,engine='openpyxl',mode='a') as writer:
+                 df.to_excel(writer,sheet_name=sheetname)
+
+# df = {
+#      'Name':['Abhishek','Arun','Vijay'],
+#      'Age':[21,23,24]
+# }
+# df = pd.DataFrame(df)
+# Path_Utils.excel_write(df,path='Excel.xlsx',sheetname='OGa')
+
+
+        
 
         
 
