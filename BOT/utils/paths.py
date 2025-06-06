@@ -16,6 +16,7 @@ class Path_Utils:
         self.timeout = timeout
 
     def click_xpath(self,xpath):
+        for _ in range(2):
             try:
                 element = WebDriverWait(self.driver,timeout=self.timeout).until(
                     Ec.element_to_be_clickable((By.XPATH,xpath))
@@ -28,6 +29,7 @@ class Path_Utils:
                 return False
 
     def send_keys_xpath(self,xpath,text:str):
+        for _ in range(2):
             try:
                 element = WebDriverWait(self.driver,timeout=self.timeout).until(
                     Ec.visibility_of_element_located((By.XPATH,xpath))
@@ -40,6 +42,7 @@ class Path_Utils:
                 return False
 
     def clear_xpath(self,xpath):
+        for _ in range(2):
             try:
                 element = WebDriverWait(self.driver,timeout=self.timeout).until(
                     Ec.element_to_be_clickable((By.XPATH,xpath))

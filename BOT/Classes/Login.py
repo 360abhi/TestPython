@@ -9,16 +9,33 @@ class Login:
     login_button = "(//div[.='Log in'])[last()]"
     skip = "(//div[.='Not now'])[last()]"
 
-    def __init__(self,driver):
+    def __init__(self,driver,logger):
+        self.logger = logger
         self.driver = driver
         self.paths = Path_Utils(self.driver)
 
-    def login(self,username,password):
-        self.paths.send_keys_xpath(self.username_field,username)
-        self.paths.send_keys_xpath(self.password_field,password)
-        self.paths.click_xpath(self.login_button)
-        time.sleep(5)
-        self.paths.click_xpath(self.skip)
-        
+    def log_action(self,action_result,success_msg,error_msg,capture_error=None,capture_locator=None):
+        if action_result:
+            self.logger.info(success_msg)
+        else:
+            self.logger.error(error_msg)
+            raise Exception(error_msg)
 
+    def login(self,username,password):
+        self.log_action(self.paths.send_keys_xpath(self.username_field,username),
+                        f"{username} entered successfully",
+                        f"{username} enter exception")
+        
+        self.log_action(self.paths.send_keys_xpath(self.password_field,password),
+                        f"Password enter success",
+                        f"Password enter exception")
+        
+        self.log_action(self.paths.click_xpath(self.login_button),
+                        "Login click success",
+                        "Login click exception")
+
+        self.log_action(self.paths.click_xpath(self.skip),
+                        "Skip Save Info Success",
+                        "Skip Save Info Exception")
+        
         
