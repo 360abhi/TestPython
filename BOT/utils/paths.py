@@ -1,4 +1,5 @@
 import pandas as pd
+from selenium.common.exceptions import StaleElementReferenceException
 import requests
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -16,17 +17,20 @@ class Path_Utils:
         self.timeout = timeout
 
     def click_xpath(self,xpath):
-        for _ in range(2):
+        for _ in range(3):
             try:
                 element = WebDriverWait(self.driver,timeout=self.timeout).until(
                     Ec.element_to_be_clickable((By.XPATH,xpath))
                 )
                 element.click()
                 return True
+            except StaleElementReferenceException as e:
+                print(str(e))
+                print("Stale element: Retrying...")
             except Exception as e:
                 print(str(e))
                 print(f"Exception during xpath of {xpath}")
-                return False
+        return False
 
     def send_keys_xpath(self,xpath,text:str):
         for _ in range(2):
@@ -39,7 +43,7 @@ class Path_Utils:
             except Exception as e:
                 print(str(e))
                 print(f"Exception during xpath {xpath}")
-                return False
+        return False
 
     def clear_xpath(self,xpath):
         for _ in range(2):
@@ -52,14 +56,18 @@ class Path_Utils:
             except Exception as e:
                 print(str(e))
                 print(f"Exception during xpath {xpath}")
-                return False
+        return False
             
     def get_element(self,xpath):
+        for _ in range(2):
             try:
                 element = WebDriverWait(self.driver,timeout=self.timeout).until(
                     Ec.visibility_of_element_located((By.XPATH,xpath))
                 )
                 return element
+            except StaleElementReferenceException as e:
+                print(str(e))
+                print("Stale element Retrying.....")
             except Exception as e:
                 print(str(e))
 

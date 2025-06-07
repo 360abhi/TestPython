@@ -1,0 +1,45 @@
+🏷️ 2. Naming Conventions
+This is mostly about clarity + Pytest discovery.
+
+Element	Convention	Example
+Test file	test_*.py or *_test.py	test_auth.py
+Test function	test_*	test_valid_login()
+Test class	class Test*	class TestLoginSuite:
+Test method	def test_*	def test_with_invalid_pwd
+
+What are setup and teardown?
+****They’re special functions that run automatically before and after each test (or test class/session/etc.),
+used to:
+
+Setup → Prepare test environment (e.g., open browser, connect to DB)
+
+Teardown → Clean up after the test (e.g., close browser, delete temp files)
+
+🧪 Other Variants 
+Scope	Use with
+setup_method()	Runs before each method
+setup_class()	Runs once before all in class
+setup_module()	Runs before tests in a file
+setup_function()	For tests not in a class
+
+How It Works:
+1. @pytest.mark.parametrize decorator:
+ Takes two arguments:
+ A string of parameter names (comma-separated).
+ A list of tuples where each tuple contains a set of input values.
+2. Test function:
+ The parameters are passed to the test function, which runs once for each tuple in the
+list.
+
+
+# Fixtures Scope
+Scopes can be:
+
+"function" (default): Run for every test.
+
+"class": Run once per test class.
+
+"module": Run once per file.
+
+"session": Run once across the entire test session.
+
