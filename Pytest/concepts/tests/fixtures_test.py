@@ -26,3 +26,13 @@ def auto():
 
 def test_au():
     assert 1==1
+
+
+@pytest.fixture
+def setup_data_fix():
+    print("Setup Data Start")
+    yield {"a":5}
+    print("\nSetup Data Clear")
+
+def test_data_fix(setup_data_fix):
+    assert setup_data_fix['a'] == 5

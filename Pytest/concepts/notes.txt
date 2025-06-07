@@ -43,3 +43,50 @@ Scopes can be:
 
 "session": Run once across the entire test session.
 
+🔧 setup_method / teardown_method (used in classes)
+These are xUnit-style setup/teardown functions. They:
+
+Are part of class-based test style.
+
+Automatically run before and after each method inside the class.
+
+Require you to define your tests inside a class.
+
+✅ When to use:
+When writing class-based tests (e.g., organizing related tests inside a test class).
+
+When your setup/cleanup is simple and doesn't need to be reused in other test files.
+
+
+🧪 @pytest.fixture (fixture-style)
+Fixtures are more flexible and powerful. They:
+
+Work both inside or outside classes.
+
+Can be shared across multiple test files.
+
+Can return objects/data, support parameters, and can even be layered/combined.
+
+Support setup + teardown with yield.
+
+✅ When to use:
+When you want reusable setup logic across different files or test classes.
+
+When you need to pass data or objects into your test functions.
+
+When testing tools like Selenium (e.g., browser object fixture).
+
+When needing modular, scalable test setups.
+
+
+ Why @pytest.fixture is ideal for your project:
+You need to reuse setup logic (like launching a browser, logging in, navigating).
+
+You may want different setups (e.g. logged-in user, logged-out user, mobile viewport).
+
+Fixtures can be used across multiple test files (e.g., test_login.py, test_images.py).
+
+You can easily manage setup + teardown using yield (e.g., open browser, run test, quit).
+
+It's clean, scalable, and more maintainable when your project grows.
+
