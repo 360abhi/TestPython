@@ -2,7 +2,7 @@ import logging
 import os
 from datetime import datetime
 
-def setup_logger(log_name: str):
+def setup_logger(log_name: str = 'sauce_demo'):
 
     # Create logs directory if it doesn't exist
     os.makedirs("logs", exist_ok=True)
