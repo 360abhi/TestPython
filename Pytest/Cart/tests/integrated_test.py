@@ -1,5 +1,4 @@
 import pytest
-import os
 from pathlib import Path
 from selenium.webdriver.common.alert import Alert
 import sys
@@ -37,20 +36,22 @@ def home(driver,logger):
 @pytest.mark.parametrize("username,password,items,firstname,lastname,zip,expected_price,exp_message",[
     ("standard_user","secret_sauce",['Sauce Labs Bolt T-Shirt','Sauce Labs Bike Light'],"abhishek","chhawari","123401","$25.98","Thank You")
 ])
-def test_flow(login,home,username,password,items,firstname,lastname,zip,expected_price,exp_message):
+def test_flow(login,home,username,password,items,firstname,lastname,zip,expected_price,exp_message,subtests):
     login.enter_username(username)
     login.enter_password(password)
     login.click_login()
-    time.sleep(400)
     home.add_to_cart(items)
     cart_count = home.get_cart_count()
-    assert cart_count == str(2)
+    with subtests.test("Cart Count Check"):
+        assert cart_count == str(2)
     home.go_to_cart()
     home.checkout()
     home.add_details(firstname,lastname,zip)
     price = home.get_total_item_price()
-    assert price == expected_price
+    with subtests.test("Price Check"):
+        assert price == expected_price
     home.click_finish()
     message = home.get_thankyou_text()
-    assert exp_message.lower() in message 
+    with subtests.test("Thank you message"):
+        assert exp_message.lower() in message.lower() 
 
