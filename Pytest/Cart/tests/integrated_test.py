@@ -1,41 +1,11 @@
 import pytest
 from pathlib import Path
-from selenium.webdriver.common.alert import Alert
 import sys
 root_path = Path(__file__).parent.parent.parent.parent
 sys.path.append(str(root_path))
-import time
-from Pytest.Project.driver import setup_webdriver
-from Pytest.Cart.Pages.Home import Home_Page
-from Pytest.Cart.Pages.Login import Login_Page
-from BOT.Logging.logger import setup_logger
+from Pytest.Cart.Data.get_data import get_initiate_data
 
-@pytest.fixture
-def driver():
-    webdriver = setup_webdriver()
-    webdriver.get('https://www.saucedemo.com/v1/')
-    yield webdriver
-    webdriver.quit()
-
-@pytest.fixture
-def logger():
-    log = setup_logger('sauce_demot')
-    return log
-
-
-@pytest.fixture
-def login(driver,logger):
-    setup_login = Login_Page(driver,logger)
-    return setup_login
-
-@pytest.fixture
-def home(driver,logger):
-    setup_home = Home_Page(driver,logger)
-    return setup_home
-
-@pytest.mark.parametrize("username,password,items,firstname,lastname,zip,expected_price,exp_message",[
-    ("standard_user","secret_sauce",['Sauce Labs Bolt T-Shirt','Sauce Labs Bike Light'],"abhishek","chhawari","123401","$25.98","Thank You")
-])
+@pytest.mark.parametrize("username,password,items,firstname,lastname,zip,expected_price,exp_message",get_initiate_data())
 def test_flow(login,home,username,password,items,firstname,lastname,zip,expected_price,exp_message,subtests):
     login.enter_username(username)
     login.enter_password(password)
@@ -54,4 +24,6 @@ def test_flow(login,home,username,password,items,firstname,lastname,zip,expected
     message = home.get_thankyou_text()
     with subtests.test("Thank you message"):
         assert exp_message.lower() in message.lower() 
+
+
 

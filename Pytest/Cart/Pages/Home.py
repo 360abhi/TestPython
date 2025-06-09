@@ -1,5 +1,5 @@
 from Pytest.Project.utils.paths import Path_Utils
-
+import ast
 class Home_Page:
 
     # Xpaths
@@ -28,6 +28,7 @@ class Home_Page:
             raise Exception
 
     def add_to_cart(self,items):
+        items = ast.literal_eval(items)
         if len(items) < 1:
             print("Items cannot be less than 1")
             self.logger.error("Items cannot be less than 1")
