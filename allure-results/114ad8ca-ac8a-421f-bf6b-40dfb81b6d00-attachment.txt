@@ -1,0 +1,12 @@
+sauce_demot  2025-06-10 02:43:15,510 - INFO - username sent successfully
+sauce_demot  2025-06-10 02:43:15,597 - INFO - password sent successfully
+sauce_demot  2025-06-10 02:43:15,946 - INFO - login click success
+sauce_demot  2025-06-10 02:43:16,098 - INFO - Sauce Labs Bolt T-Shirt added to cart successfully
+sauce_demot  2025-06-10 02:43:16,179 - INFO - Sauce Labs Bike Light added to cart successfully
+sauce_demot  2025-06-10 02:43:16,367 - INFO - Cart Page click success
+sauce_demot  2025-06-10 02:43:16,521 - INFO - Checkout click success
+sauce_demot  2025-06-10 02:43:16,626 - INFO - shruti sent successfully
+sauce_demot  2025-06-10 02:43:16,700 - INFO - chhawari sent successfully
+sauce_demot  2025-06-10 02:43:16,777 - INFO - 123401 sent successfully
+sauce_demot  2025-06-10 02:43:16,951 - INFO - Continue button click success
+sauce_demot  2025-06-10 02:43:17,174 - INFO - finish button click success
