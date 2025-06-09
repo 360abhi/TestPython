@@ -70,7 +70,9 @@ class Home_Page:
 
     def get_total_item_price(self):
         price = self.paths.get_element_text(self.item_total_field)
-        return str(price)
+        ele = price.find(":")
+        last_string = price[ele+1:].strip()
+        return str(last_string)
     
     def click_finish(self):
         self.log_action(self.paths.click_xpath(self.finish_btn),
