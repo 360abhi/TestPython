@@ -90,3 +90,16 @@ You can easily manage setup + teardown using yield (e.g., open browser, run test
 
 It's clean, scalable, and more maintainable when your project grows.
 
+use all fixtures in conftest.py
+
+
+## allure
+pytest tes.py --alluredir = allure_results
+allure serve allure_results
+
+for subtests inside the maintest fun:
+use separatre allure.step function with act,exp and call them inside maintest fun
+
+or use subtest [pass inside the argumnet] then use in the function
+ with subtests.test("Thank you message"):
+        assert exp_message.lower() in message.lower(),"Message mismatch"

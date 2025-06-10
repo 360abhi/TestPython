@@ -1,5 +1,6 @@
 import os
 import sys
+import pytest
 
 curr_dir = os.path.dirname(os.path.abspath(__file__))
 root = os.path.abspath(os.path.join(curr_dir,'..','..'))
@@ -17,4 +18,7 @@ with ThreadPoolExecutor(max_workers=3) as executor:
     for result in results:
         print(f"Result :{result}")
 
-print(mydf)
+@pytest.mark.parametrize("sheetname",[('Sheet1'),('Sheet2'),('Sheet3')])
+def test_all(sheetname):
+    run.execute(sheet_name=sheetname)
+
