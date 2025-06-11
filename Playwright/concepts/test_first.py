@@ -7,7 +7,7 @@ import time
 
 def run():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=True)
         page = browser.new_page()
         page.goto('https://realpython.github.io/fake-jobs/')
         context = page.context
@@ -17,7 +17,7 @@ def run():
         print(f"New page url {new_page.url}")
         print(f"Old page url {page.url}")
         new_page.click("//a[.='Join']")
-        time.sleep(3)
+        print(new_page.url)
         browser.close()
 
 run()
