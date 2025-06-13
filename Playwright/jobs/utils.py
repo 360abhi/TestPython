@@ -1,5 +1,6 @@
 from playwright.sync_api import Page
 from docx import Document
+from docx.shared import Inches
 import os
 
 class Utils:
@@ -20,7 +21,7 @@ class Utils:
             doc = Document()
 
         doc.add_paragraph("Screenshot Added")
-        doc.add_picture(image_name)
+        doc.add_picture(image_name,width=Inches(6))
 
         doc.save(doc_path)
         os.remove(image_name)

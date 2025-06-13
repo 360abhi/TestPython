@@ -16,7 +16,7 @@ def getDf(jobs:list) -> pd.DataFrame:
     }
 
     df = pd.DataFrame(df)
-    utils.
+    Read.excel_write(Read.SCRAPER_EXCEL,df,sheetname=Read.SCRAPER_SHEET)
 
     return df
 
@@ -29,8 +29,9 @@ def getJobs():
         home.goto_url(Read.URL)
         home.search_job(Read.JOB_TITLE)
         jobs = home.get_jobs(num_jobs=45)
-        for i in range(len(jobs)):
-            print(f"{i+1} : {jobs[i]}")
+        getDf(jobs)
+        # for i in range(len(jobs)):
+        #     print(f"{i+1} : {jobs[i]}")
         browser.close()
 
 if __name__ == "__main__":

@@ -10,6 +10,7 @@ class Read:
     URL = con.get('URL','app_url')
     JOB_TITLE = con.get('JOB','python_job')
     SCRAPER_EXCEL = con.get('FILE','scraper_excel')
+    SCRAPER_SHEET = con.get('FILE','scraper_sheet')
 
     def excel_write(path:str,output:pd.DataFrame,sheetname:str):
         if os.path.exists(path):
