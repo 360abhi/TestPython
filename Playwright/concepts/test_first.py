@@ -3,7 +3,6 @@ def test_open_google(page):
     assert "Google" in page.title()
 
 from playwright.sync_api import sync_playwright
-import time
 
 def run():
     with sync_playwright() as p:
