@@ -68,3 +68,9 @@ def setup_browser():
         browser = p.chromium.launch(headless=False)
         page = browser.new_page()
         return page,browser
+
+checks:
+self.page.wait_for_selector(self.find_jobs_btn, state="visible")
+expect(browser).to_have_url("https://www.saucedemo.com/inventory.html")
+expect(browser.locator(".inventory_item")).to_be_visible()
+expect(browser.locator("h3[data-test='error']")).to_contain_text("locked out")

@@ -1,0 +1,37 @@
+| Task               | Command                           | Notes                                        |
+| ------------------ | --------------------------------- | -------------------------------------------- |
+| **Show databases** | ❌ *Not supported*                 | SQLite is file-based, so no `SHOW DATABASES` |
+| **Create DB**      | `sqlite3 mydb.db`                 | Done at launch (creates file)                |
+| **Show tables**    | `.tables`                         | Lists all tables                             |
+| **Show schema**    | `.schema` or `.schema table_name` | Shows table structure                        |
+| **Create table**   | See below                         | Standard SQL                                 |
+| **List commands**  | `.help`                           | Lists SQLite-specific commands               |
+| **Exit SQLite**    | `.exit` or `.quit`                | Ends session                                 |
+
+
+Department = > id:pk ,name
+Employee => id:pk,name,email,salary_grade:fk,dep_id:fk
+Salary=>id:pk,salary
+
+.mode column
+.headers on
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE Employee (
+    emp_id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    grade TEXT CHECK (grade IN ('A', 'B', 'C')),
+    dept_id INTEGER,
+    FOREIGN KEY (grade) REFERENCES Salary(grade),
+    FOREIGN KEY (dept_id) REFERENCES Department(dept_id)
+);
+CREATE TABLE Salary (
+    grade TEXT PRIMARY KEY CHECK (grade IN ('A', 'B', 'C')),
+    base_salary REAL NOT NULL
+);
+CREATE TABLE Department (
+    dept_id INTEGER PRIMARY KEY,
+    dept_name TEXT NOT NULL
+);
+
