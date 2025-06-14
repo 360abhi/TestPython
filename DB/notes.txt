@@ -35,3 +35,11 @@ CREATE TABLE Department (
     dept_name TEXT NOT NULL
 );
 
+## queries
+SELECT name, grade FROM Employee WHERE dept_id = 2;
+SELECT name AS 'Employee Name', grade AS 'Grade Level' FROM Employee;
+SELECT DISTINCT grade FROM Employee; // only grade col with unique values
+
+
+
+
