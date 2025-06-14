@@ -40,6 +40,114 @@ SELECT name, grade FROM Employee WHERE dept_id = 2;
 SELECT name AS 'Employee Name', grade AS 'Grade Level' FROM Employee;
 SELECT DISTINCT grade FROM Employee; // only grade col with unique values
 
+# Normalization
+Normalization is the process of organizing data in a database to:
+Reduce data redundancy
+Avoid anomalies in insert/update/delete
+Ensure data integrity
 
+🔹 Why Normalize?
+Imagine if an employee’s department name was stored directly in the Employee table:
+emp_id | name   | dept_name
+-------|--------|----------
+1      | Alice  | HR
+2      | Bob    | HR
+3      | Charlie| Sales
+Now if the HR department changes name to “People Ops”, you’d have to update 
+it in every row manually. If you forget one, your data is inconsistent.
+Normalization solves this by splitting related data into separate tables.
+
+
+1NF: First Normal Form
+Rule: Each cell must hold one atomic (indivisible) value, and each row must be unique.
+emp_id | name   | phone_numbers
+-------|--------|---------------
+1      | Alice  | 12345, 67890
+Correct =>
+emp_id | name   | phone_number
+-------|--------|-------------
+1      | Alice  | 12345
+1      | Alice  | 67890
+
+or diff table for phone number with emp id 
+
+🔹 2NF: Second Normal Form
+Rule: Table must be in 1NF, and all non-key columns must depend on the whole primary key.
+🧠 Applies only if there's a composite primary key (a key made of two or more columns).
+(emp_id, course_id) → marks, student_name, course_name
+student_name depends only on emp_id
+course_name depends only on course_id
+⛔ This violates 2NF. Solution: break into 3 tables — Student, Course, and Enrollment.
+👉 Your schema has simple primary keys, so you're already satisfying 2NF.
+
+3NF: Third Normal Form
+Rule: Table must be in 2NF, and no transitive dependencies (i.e., a non-key column should not depend on another non-key column).
+emp_id | name | dept_id | dept_name
+Here, dept_name depends on dept_id, not directly on emp_id.
+✅ Solution: move dept_name to a Department table:
+Department: dept_id → dept_name
+Employee: emp_id → dept_id
+👉 Your schema does this already with Department and Salary tables — so ✅ 3NF is satisfied.
+
+ Scenario: University Course Enrollment
+❌ Initial Table (Not in 3NF)
+| student\_id | student\_name | course\_id | course\_name | instructor\_name |
+| ----------- | ------------- | ---------- | ------------ | ---------------- |
+| 1           | Alice         | CSE101     | DBMS         | Dr. Kapoor       |
+| 2           | Bob           | CSE101     | DBMS         | Dr. Kapoor       |
+| 3           | Charlie       | CSE102     | Networks     | Dr. Rao          |
+student_name depends only on student_id → okay.
+
+course_name and instructor_name depend on course_id, not directly on the primary key (student_id, course_id).
+| student\_id | student\_name |
+| ----------- | ------------- |
+| 1           | Alice         |
+| 2           | Bob           |
+| 3           | Charlie       |
+
+| course\_id | course\_name | instructor\_name |
+| ---------- | ------------ | ---------------- |
+| CSE101     | DBMS         | Dr. Kapoor       |
+| CSE102     | Networks     | Dr. Rao          |
+
+| student\_id | course\_id |
+| ----------- | ---------- |
+| 1           | CSE101     |
+| 2           | CSE101     |
+| 3           | CSE102     |
+
+❓ Can we put course_id directly in the student table instead of creating an Enrollment table?
+No, we should not — if a student can enroll in more than one course, then you must use a separate Enrollment table.
+
+If you add course_id directly in the student table, it assumes:
+
+One student = One course
+Which is not true in real-life scenarios.
+| student\_id | student\_name | course\_id |
+| ----------- | ------------- | ---------- |
+| 1           | Alice         | CSE101     |
+| 1           | Alice         | CSE102     |
+Now you’re repeating Alice twice. That’s data duplication, which leads to:
+
+Redundancy
+Anomalies during update/delete
+Violation of 1NF (atomicity)
+✅ Proper Way: Use an Enrollment Table
+A separate Enrollment table handles the many-to-many relationship:
+A student can enroll in many courses
+A course can have many students
+
+How to separate:
+
+If column B depends on column A, and column A depends on the primary key, then B is transitively dependent.
+Move B into a new table with A as its primary key.
+
+
+# composite key:
+CREATE TABLE EmployeePhoneNumbers (
+    emp_id INTEGER,
+    phone_number TEXT,
+    PRIMARY KEY (emp_id, phone_number)
+);
 
 
