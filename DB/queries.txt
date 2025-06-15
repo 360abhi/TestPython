@@ -96,3 +96,66 @@ sqlite> select d.dept_name,e.name,s.base_salary
    ...> inner join department d on d.dept_id = e.dept_id
    ...> inner join salary s on s.grade = e.grade
    ...> where s.base_salary >200000;
+
+
+### LEFT JOIN
+A LEFT JOIN returns:
+All rows from the left table (Employee in our example).
+Matching rows from the right table (Department, Salary etc.).
+If there’s no match, it fills the right table's columns with NULLs.
+
+SELECT e.name, d.dept_name
+FROM Employee e
+LEFT JOIN Department d ON e.dept_id = d.dept_id;
+
+Step-by-step:
+Start with all rows from Employee (left table).
+For each Employee row, try to find a matching Department based on dept_id.
+If a match is found, return combined data.
+If no match is found, fill the Department fields (i.e., d.dept_name) with NULL.
+***Final output has same number of rows as Employee, never less.
+
+Fetch all employees and their salary details.
+Show the employee name, grade, and base salary. Ensure that even if an employee's grade is missing in the Salary table, they are still included.
+sqlite> select e.name,e.grade,s.base_salary
+   ...> from employee e
+   ...> left join salary s on s.grade = e.grade;
+
+
+### RIGHT JOIN
+A RIGHT JOIN returns all rows from the right table, and the matched rows from the left table. If there's no match, the result is NULL on the left table's columns.
+If LEFT JOIN keeps everything from the left,
+then RIGHT JOIN keeps everything from the right, even if the left table doesn't match.
+
+=>  SELECT columns
+    FROM left_table
+    RIGHT JOIN right_table ON condition;
+
+sqlite> select e.name,d.dept_name
+   ...> from employee e
+   ...> right join department d on d.dept_id = e.dept_id;
+
+
+## FULL OUTER JOIN
+A FULL OUTER JOIN combines the results of:
+LEFT JOIN → all rows from the left table (even if there's no match),
+RIGHT JOIN → all rows from the right table (even if there's no match),
+Then it merges them — showing all rows from both sides, matching where possible, and showing NULL where there’s no match.
+-- Simulate FULL OUTER JOIN between Employee and Department
+sqlite> select e.name,d.dept_name
+   ...> from employee e
+   ...> left join department d on d.dept_id = e.dept_id 
+   ...> union
+   ...> select e.name,d.dept_name
+   ...> from employee e
+   ...> right join department d on d.dept_id = e.dept_id;
+
+    or
+
+sqlite> select e.name,d.dept_name
+   ...> from employee e
+   ...> full outer join department d on d.dept_id = e.dept_id;
+
+both are same=<>
+
+
