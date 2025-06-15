@@ -1,0 +1,98 @@
+SELECT name FROM Employee WHERE grade = 'B';
+
+SQL internally does:
+
+FROM → finds the table
+WHERE → filters rows
+SELECT → chooses columns to return
+ORDER BY (if any)
+LIMIT (if any)
+
+#queries
+sqlite> select * from employee where name like 'A%';
+emp_id  name      email                    grade  dept_id
+------  --------  -----------------------  -----  -------
+1       Alice     alice@example.com        A      1
+11      Abhishek  abhishekch360@gmail.com  B      3
+
+sqlite> SELECT * FROM Salary WHERE base_salary BETWEEN 180000 AND 250000;
+grade  base_salary
+-----  -----------
+A      230000.0
+B      200000.0
+
+ Why JOIN?
+Imagine:
+You have an Employee table with a dept_id
+You have a Department table with details of each department
+You want to show employee name along with department name. But that info is in two different tables.
+A JOIN merges them into one combined result.
+
+🧠 How It Works – Concept
+Think of a JOIN like matching two lists:
+Find rows in Table A and Table B that have equal values in the join column
+Then, merge the matched rows.
+
+ Types of JOINs (focus on the 3 most used)
+1. INNER JOIN
+Returns rows only where there's a match in both tables
+If no match, row is skipped
+
+sqlite> select e.name,d.dept_name 
+   ...> from employee e
+   ...> inner join department d
+   ...> on e.dept_id = d.dept_id
+   ...> where d.dept_name !='HR';
+
+sqlite> select e.name,e.email 
+   ...> from employee e
+   ...> inner join salary s
+   ...> on e.grade = s.grade
+   ...> where s.base_salary >200000;
+
+sqlite> select e.name,d.dept_name,s.base_salary
+   ...> from employee e
+   ...> inner join department d on e.dept_id = d.dept_id
+   ...> inner join salary s on s.grade = e.grade; 
+
+1. FROM Employee e
+This is your main table (also called the driving table).
+SQL starts by considering all rows from the Employee table.
+Let’s say you have 25 employees — it begins with those 25 rows.
+
+2. INNER JOIN Department d ON e.dept_id = d.dept_id
+Now, SQL tries to match each employee’s dept_id with a corresponding row in the Department table.
+It only keeps the combinations where a match is found.
+This is essentially like a "lookup" — it pulls dept_name for each employee from the Department table.
+So after this step, you now have a virtual table with:
+name, dept_id, dept_name.
+
+3. INNER JOIN Salary s ON e.grade = s.grade
+Next, it takes that result (employee + department) and now joins with Salary table.
+Again, it looks at each row and matches e.grade with s.grade.
+If matched, it pulls base_salary from the Salary table.
+
+**Joins combine rows from multiple tables by matching a condition.
+Each JOIN works like a filter — if there’s no match, the row is excluded in an INNER JOIN.
+**You're building a larger row that includes columns from all matched tables.
+
+Questions:
+List the names of employees working in the "Engineering" department along with their salary grade and base salary.
+sqlite> select e.name,e.grade,s.base_salary
+   ...> from employee e 
+   ...> inner join department d on d.dept_id = e.dept_id
+   ...> inner join salary s on s.grade = e.grade
+   ...> where d.dept_name = 'Engineering';
+
+Find the names and departments of all employees who are in grade 'B' or 'C'.
+sqlite> select e.name,d.dept_name
+   ...> from employee e 
+   ...> inner join department d on d.dept_id = e.dept_id
+   ...> where e.grade in ('B','C');
+
+List the department name, employee name, and salary of all employees whose base salary is greater than 200000.
+sqlite> select d.dept_name,e.name,s.base_salary 
+   ...> from employee e
+   ...> inner join department d on d.dept_id = e.dept_id
+   ...> inner join salary s on s.grade = e.grade
+   ...> where s.base_salary >200000;

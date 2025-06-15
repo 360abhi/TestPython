@@ -150,4 +150,84 @@ CREATE TABLE EmployeePhoneNumbers (
     PRIMARY KEY (emp_id, phone_number)
 );
 
+q:A particular database is normalized to satisfy a particular level of normalization (either 1NF or 2NF or 3NF). One of the tables contains, among other fields, a column for the City and a column for the Zip Code. Assuming that there is a many-to-one mapping between the set of Zip Code(s) and City, we may conclude that the database is definitely NOT in NF form. What is the integer x (1, 2, or 3)?
 
+The key detail in this question is:
+"There is a many-to-one mapping between Zip Code(s) and City."
+This means multiple Zip Codes map to the same City, i.e., City is functionally dependent on Zip Code.
+
+2NF (Second Normal Form):
+Must be in 1NF.
+No partial dependency of any non-prime attribute on a part of a composite primary key.
+⚠️ If your table has a single-column primary key, 2NF is automatically satisfied.
+
+❌ 3NF (Third Normal Form):
+Must be in 2NF.
+No transitive dependencies (i.e., non-key attribute should not depend on another non-key attribute).
+
+In your case:
+Suppose Zip_Code is stored in the table along with City.
+And City can be derived from Zip_Code.
+
+A table is in Third Normal Form (3NF) if:
+It is in 2NF
+Every non-key attribute is directly dependent only on the primary key, and not on another non-key attribute
+Customer(customer_id, name, zip_code, city)
+
+Here:
+customer_id is the primary key
+zip_code → city (i.e., city is functionally dependent on zip)
+So, city is transitively dependent on customer_id through zip_code
+🔴 This violates 3NF, even if zip_code → city is 1:1
+Because city is not directly dependent on the key, but on another non-key (zip_code)
+Customer(customer_id, name, zip_code)
+ZipCode(zip_code, city)=>
+All non-key columns in Customer depend only on customer_id
+city is stored with its true key: zip_code
+
+
+🔗 1. One-to-One (1:1)
+🧩 When:
+Each row in Table A is linked to exactly one row in Table B, and vice versa.
+✅ Example:
+A Person has exactly one Passport.
+Person(person_id PK, name, age)
+Passport(passport_id PK, person_id FK UNIQUE, issue_date)
+You can keep the foreign key in either table, but usually in the one that's optional (e.g., not everyone has a passport).
+UNIQUE on person_id ensures one-to-one.
+
+2. One-to-Many (1:N)
+🧩 When:
+One row in Table A is linked to multiple rows in Table B.
+✅ Example:
+One Department has many Employees.
+Department(dept_id PK, name)
+Employee(emp_id PK, name, dept_id FK)
+This is the most common and straightforward relationship.
+
+
+***🔗 3. Many-to-Many (M:N)
+🧩 When:
+Many rows in Table A relate to many in Table B.
+✅ Example:
+Students enroll in multiple Courses, and each Course has many Students.
+Student(student_id PK, name)
+Course(course_id PK, title)
+Enrollment(student_id FK, course_id FK, PRIMARY KEY(student_id, course_id))
+
+=>Enrollment is a junction/bridge table that breaks the M:N into two 1:N relationships.
+You can add attributes here like enroll_date, grade.
+
+
+✅ Summary:
+One-to-One (1:1) →
+✅ Only 2 tables needed
+↪ Just add a FOREIGN KEY with UNIQUE constraint to enforce 1:1
+
+One-to-Many (1:N) →
+✅ 2 tables needed
+↪ Add a foreign key in the "many" side (child table)
+
+Many-to-Many (M:N) →
+❗ Needs 3 tables
+↪ You must use a bridge table (also called a junction table) to resolve the many-to-many into two one-to-many relationships
