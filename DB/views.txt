@@ -1,0 +1,49 @@
+✅ What is a View?
+A view is a virtual table based on the result of a SQL query.
+It does not store data itself, but provides a way to look at data from one or more tables.
+
+Think of a view like a "named SELECT query" that you can use like a table.
+
+| Reason             | Explanation                                                         |
+| ------------------ | ------------------------------------------------------------------- |
+| 🔒 **Security**    | Hide sensitive columns by showing only selected data.               |
+| 💡 **Simplicity**  | Complex joins and queries can be reused easily.                     |
+| 🧠 **Abstraction** | Provides a cleaner interface to raw data.                           |
+| 🔄 **Reusability** | Same query logic used in multiple places.                           |
+| 🧼 **Consistency** | Ensure standardized logic (e.g., salary with grade already joined). |
+
+
+CREATE VIEW view_name AS
+SELECT column1, column2
+FROM table1
+JOIN table2 ON ...
+WHERE condition;
+
+CREATE VIEW emp_details AS
+SELECT e.name, e.email, d.dept_name, s.base_salary
+FROM employee e
+JOIN department d ON e.dept_id = d.dept_id
+JOIN salary s ON e.grade = s.grade;
+
+=> Now we can use this on the view
+SELECT * FROM emp_details;
+
+high_salary_emps – Filter Only High Earners (Salary > 200000)
+
+CREATE VIEW high_salary_emps AS
+SELECT 
+    e.name,
+    e.grade,
+    s.base_salary,
+    d.dept_name
+FROM 
+    employee e
+JOIN 
+    salary s ON e.grade = s.grade
+JOIN 
+    department d ON e.dept_id = d.dept_id
+WHERE 
+    s.base_salary > 200000;
+
+DROP VIEW view_name;
+

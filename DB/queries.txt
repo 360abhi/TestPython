@@ -1,3 +1,47 @@
+//update delete 
+
+UPDATE table_name
+SET column1 = value1, column2 = value2, ...
+WHERE condition;
+
+UPDATE employee
+SET grade = 'A'
+WHERE name = 'Ravi';
+
+DELETE FROM table_name
+WHERE condition;
+DELETE FROM employee
+WHERE grade = 'C';
+
+ALTER TABLE employee
+ADD COLUMN phone TEXT;
+ALTER TABLE employee
+RENAME COLUMN name TO full_name;
+
+
+ALTER TABLE employee
+RENAME TO staff;
+
+**Steps to Drop a Column in SQLite (e.g., drop email column from employee):
+1. Create a new table without the column:
+CREATE TABLE employee_new (
+  emp_id INTEGER PRIMARY KEY,
+  name TEXT,
+  grade TEXT,
+  dept_id INTEGER,
+  FOREIGN KEY (grade) REFERENCES Salary(grade),
+  FOREIGN KEY (dept_id) REFERENCES Department(dept_id)
+);
+2. Copy the data into the new table:
+INSERT INTO employee_new (emp_id, name, grade, dept_id)
+SELECT emp_id, name, grade, dept_id FROM employee;
+3. Drop the old table:
+DROP TABLE employee;
+4. Rename the new table to the original name:
+ALTER TABLE employee_new RENAME TO employee;
+
+
+
 SELECT name FROM Employee WHERE grade = 'B';
 
 SQL internally does:
@@ -158,4 +202,173 @@ sqlite> select e.name,d.dept_name
 
 both are same=<>
 
+## SORTING-----><
+
+2. Sorting with ORDER BY
+ORDER BY sorts your result after filtering, based on one or more columns.
+sqlite> select e.name,s.base_salary
+   ...> from employee e
+   ...> inner join salary s on s.grade = e.grade
+   ...> order by s.base_salary;
+
+sqlite> select e.name,s.base_salary
+   ...> from employee e
+   ...> inner join salary s on s.grade = e.grade
+   ...> order by s.base_salary desc;
+
+ 3. Limiting Results with LIMIT
+LIMIT is used to return a specific number of rows from the result.
+LIMIT with OFFSET:
+
+SELECT * FROM Employee
+ORDER BY base_salary DESC
+LIMIT 5 OFFSET 5;
+
+=>Skips first 5 rows, returns the next 5
+=-> 2nd largest salary offset 1, nth highest offset n-1,otherwise subquery
+
+🧠 How it works internally:
+FROM → table(s) joined
+WHERE → filters rows
+GROUP BY / HAVING → applies if used
+ORDER BY → sorts the filtered data
+LIMIT → cuts down the result
+
+q->Get the names and grades of employees not in the 'Marketing' department, and sort them by their name in descending order.
+sqlite> select e.name,e.grade 
+   ...> from employee e
+   ...> inner join department d on d.dept_id = e.dept_id
+   ...> where d.dept_name !='Marketing' 
+   ...> order by e.name desc;
+
+q-Find the top 3 employees with the highest base salary, showing their name, grade, and Salary
+sqlite> select e.name,e.grade,s.base_salary
+   ...> from employee e
+   ...> inner join salary s on s.grade = e.grade
+   ...> order by s.base_salary desc
+   ...> limit 3;
+
+q->List the names of employees whose name starts with 'S' or 'A', and whose grade is either 'B' or 'C', sorted by grade ascending.
+SELECT e.name
+FROM employee e
+WHERE (e.name LIKE 'A%' OR e.name LIKE 'S%')
+  AND grade IN ('B', 'C')
+ORDER BY e.grade ASC;
+
+1-> Find the names and departments of employees whose name contains the letter 'n' (case-insensitive), sorted alphabetically by department name.
+SELECT e.name, d.dept_name
+FROM employee e
+INNER JOIN department d ON d.dept_id = e.dept_id
+WHERE LOWER(e.name) LIKE '%n%'
+ORDER BY d.dept_name;
+
+Multi-Column Sorting:
+You can sort by more than one column. Example:
+ORDER BY dept_name ASC, salary DESC;
+
+Sorts first by dept_name alphabetically.
+If multiple employees are in the same department, then sorts them by salary in descending order within each department.
+
+
+## GROUP BY AND HAVING
+🧠 Mental Model:
+Think of GROUP BY as saying:
+“Group my rows by this column, and now I want to do something with each group — like count, sum, avg, etc.”
+
+SELECT column1, AGG_FUNC(column2)
+FROM table
+GROUP BY column1;
+
+SELECT grade, COUNT(*) AS total
+FROM employee
+GROUP BY grade;
+
+SQL groups all employees by grade.
+Then for each grade group, it counts how many employees exist.
+
+Where vs Having
+🔹 WHERE:
+Filters before grouping happens.
+Acts on individual rows.
+🔹 HAVING:
+Filters after groups are formed.
+Acts on aggregated groups.
+
+ Common Aggregation Functions Used with GROUP BY
+COUNT(*) → Count of rows
+SUM(column) → Total sum
+AVG(column) → Average
+MAX(column) → Largest
+MIN(column) → Smallest
+
+q->department namewise employees having more than 4
+sqlite> SELECT d.dept_name, COUNT(e.emp_id) AS num_employees
+   ...> FROM employee e
+   ...> JOIN department d ON e.dept_id = d.dept_id
+   ...> GROUP BY d.dept_name
+   ...> HAVING num_employees >4; 
+
+⚠️ Important Rule:
+You can only SELECT:
+the column you grouped by (grade)
+or an aggregate function like COUNT(), SUM(), AVG()
+
+SELECT grade, name FROM employee GROUP BY grade;  ❌
+Why? Because name is not part of GROUP BY, and it's not aggregated.
+
+1-> Department wise average salary
+sqlite> select d.dept_name,avg(s.base_salary) as avg_salary
+   ...> from employee e
+   ...> inner join department d on d.dept_id = e.dept_id
+   ...> inner join salary s on s.grade = e.grade
+   ...> group by d.dept_name;
+
+Number of Employees per Grade, Sorted
+
+SELECT grade, COUNT(*) AS total
+FROM employee
+GROUP BY grade
+ORDER BY total DESC;
+
+Employees per Department and Grade
+
+SELECT d.dept_name, e.grade, COUNT(*) AS total
+FROM employee e
+JOIN department d ON e.dept_id = d.dept_id
+GROUP BY d.dept_name, e.grade;
+
+| dept_name   | grade | total |
+| ----------- | ----- | ----- |
+| Engineering | A     | 2     |
+| Engineering | B     | 1     |
+| HR          | C     | 2     |
+
+## Second highest salary
+
+SELECT DISTINCT base_salary
+FROM salary
+ORDER BY base_salary DESC
+LIMIT 1 OFFSET 1;
+
+or 
+
+SELECT MAX(base_salary)
+FROM salary
+WHERE base_salary < (
+    SELECT MAX(base_salary)
+    FROM salary
+);
+
+
+=>Get Employee(s) with Second Highest Salary
+
+SELECT e.name, s.base_salary
+FROM employee e
+JOIN salary s ON e.grade = s.grade
+WHERE s.base_salary = (
+    SELECT DISTINCT base_salary
+    FROM salary
+    ORDER BY base_salary DESC
+    LIMIT 1 OFFSET 1
+);
 
