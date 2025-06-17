@@ -1,0 +1,147 @@
+🔍 What is an Index in SQL?
+An index is like a table of contents in a book — it helps the database find data faster without scanning every row one by one.
+
+Without index:
+Imagine searching for the word "Engineering" in a huge book without a table of contents — you’d flip through every page (this is a full table scan).
+
+With index:
+With a table of contents (index), you jump straight to the page where "Engineering" appears. This is how a database index works.
+
+📦 Where do indexes help?
+When you SELECT using a WHERE clause.
+When you JOIN tables on certain columns.
+When sorting using ORDER BY.
+When filtering using GROUP BY or HAVING.
+
+They don’t help for:
+Every single query.
+Very small tables (scanning is faster).
+Columns with too many unique values and no repeated queries.
+
+CREATE INDEX idx_emp_name ON Employee(name);
+==>
+SQL will create a structure behind the scenes on the name column of Employee.
+When you query WHERE name = 'John', it will use this index for fast lookup.
+
+SELECT * FROM Employee WHERE name = 'John';
+🔴 Without index:
+The DB goes row-by-row, checking every name.
+
+🟢 With index on name:
+The DB jumps straight to rows where name = 'John'.
+
+🔄 What happens when data is updated?
+Indexes must also be updated when:
+You INSERT new rows,
+You UPDATE an indexed column,
+You DELETE rows.
+
+So there's a small cost on performance for write-heavy operations — but a big gain for read-heavy ones.
+
+🛑 Downsides of indexes
+Take up extra disk space.
+Slight performance cost when inserting/updating.
+Having too many indexes is bad — use only on frequently searched or joined columns.
+
+| Operation Type                | Index Helps?       |
+| ----------------------------- | ------------------ |
+| `SELECT` with `WHERE`         | ✅ Yes              |
+| `JOIN` on columns             | ✅ Yes              |
+| `ORDER BY` or `GROUP BY`      | ✅ Yes              |
+| `INSERT` / `UPDATE`           | ⚠️ Slight slowdown |
+| Small tables / rarely queried | ❌ No gain          |
+
+
+*******************************888
+
+First: What happens when you add an index on Employee(name)?
+CREATE INDEX idx_emp_name ON Employee(name);
+
+This command does NOT change the structure of the Employee table in terms of columns — the table remains the same.
+But behind the scenes, a separate data structure is created to speed up queries involving name.
+
+What does the index look like internally?
+Most relational databases (including SQLite) use a B-tree data structure to store indexes.
+Think of it like a sorted dictionary or a phone book:
+Keys = the values in the name column.
+Values = references (pointers) to the rows where each name appears (i.e., the rowid).
+
+| rowid | name    |
+| ----- | ------- |
+| 1     | Alice   |
+| 2     | Bob     |
+| 3     | Charlie |
+| 4     | Alice   |
+| 5     | Zara    |
+
+B-Tree (idx_emp_name):
+------------------------
+"Alice"   → [1, 4]
+"Bob"     → [2]
+"Charlie" → [3]
+"Zara"    → [5]
+
+This index:
+Sorts names alphabetically.
+Stores pointers (rowids) to all the rows with that name.
+Is stored separately from the main table.
+
+SELECT * FROM Employee WHERE name = 'Alice';
+will jump directly to row 1 and 4 using the index, instead of scanning all 5 rows.
+
+**What Happens while changing the table data:
+INSERT a row → Index is updated to include the new key and row reference.
+UPDATE an indexed column → Index removes the old key and adds the new one.
+DELETE a row → Index entry pointing to that row is removed.
+So the index is always in sync with the actual table.
+
+⚠️ When Not to Use Indexes
+On columns with low selectivity (e.g. gender, boolean fields).
+On frequently updated columns — too many indexes slow down write performance.
+
+
+Employee Table
+emp_id: Primary key → Automatically indexed.
+dept_id: Foreign key → Add index to speed up JOINs with Department.
+grade: Foreign key → Add index for JOINs with Salary or filtering.
+name: Add index if you're doing a lot of WHERE name = ... or ORDER BY name.
+
+Department Table
+dept_id: Primary key → Automatically indexed.
+Maybe dept_name: Add index if you filter departments by name.
+
+Salary Table
+grade: Primary key → Already indexed.
+base_salary: Only index if you're doing filtering, e.g. WHERE base_salary > 200000.
+
+ 3. What Is a Unique Index?
+A unique index ensures that a column (or a group of columns) has no duplicate values. It's like a constraint + performance boost.
+Example Use Case:
+You don’t want two employees with the same email.
+
+**CREATE UNIQUE INDEX idx_unique_email ON Employee(email);
+Prevents duplicates
+Speeds up queries 
+
+
+****Note: UNIQUE constraints also create unique indexes under the hood, so if you already declared the column UNIQUE, no need to create index again.
+
+
+### INDEX Types
+
+1. Regular Index (Default)
+Speeds up lookups and joins.
+Does not enforce uniqueness.
+
+CREATE INDEX idx_dept_id ON Employee(dept_id);
+
+2. Unique Index
+Speeds up lookups and ensures no duplicates.
+Automatically created if you use UNIQUE constraint.
+
+CREATE UNIQUE INDEX idx_unique_email ON Employee(email);
+
+3. Composite Index
+Index on multiple columns (useful for compound search filters).
+CREATE INDEX idx_name_grade ON Employee(name, grade);
+
