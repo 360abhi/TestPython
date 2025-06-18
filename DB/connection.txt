@@ -1,0 +1,44 @@
+| Concept      | Meaning                                                |
+| ------------ | ------------------------------------------------------ |
+| `connect()`  | Establishes DB connection and creates `cursor` object. |
+| `cursor`     | Interface to execute SQL queries from Python.          |
+| `commit()`   | Saves changes to DB (for INSERT, UPDATE, DELETE).      |
+| `fetchall()` | Retrieves all results of SELECT query.                 |
+| `params`     | Used to avoid SQL injection (parameterized query).     |
+| `close()`    | Frees up resources — always important.                 |
+
+*****
+     def execute_many(self, query: str, data: List[Tuple[Any, ...]]):
+        """Execute many insert/update statements."""
+        if not self.cursor:
+            raise RuntimeError("Database not connected.")
+        try:
+            self.cursor.executemany(query, data)
+            self.conn.commit()
+        except sqlite3.Error as e:
+            print(f"[BATCH QUERY ERROR] {e}")
+
+    db.execute_many("INSERT INTO Salary(grade, base_salary) VALUES (?, ?)", [
+    ('D', 130000),
+    ('E', 120000)
+    ])
+
+    data = [
+    ('A', 230000),
+    ('B', 200000),
+    ('C', 150000),
+    ]
+
+    cursor.executemany("INSERT INTO Salary(grade, base_salary) VALUES (?, ?)", data)
+
+
+## sql injection:
+dont pass directly into the values the user input
+
+=>
+user_input = "'; DROP TABLE Employee; --"
+query = f"SELECT * FROM Employee WHERE name = '{user_input}'"
+cursor.execute(query)  # Dangerous!
+
+SELECT * FROM Employee WHERE name = ''; DROP TABLE Employee; --'
+It could delete your entire table.
