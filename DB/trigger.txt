@@ -1,0 +1,99 @@
+A Trigger is a special type of stored procedure in a database that automatically runs when a specific event happens on a table — like an INSERT, UPDATE, or DELETE.
+Think of it as a hidden piece of code that “fires” automatically when certain changes happen in your data.
+
+📌 Why Are Triggers Useful?
+Triggers allow you to:
+
+Enforce rules automatically.
+Track changes without writing code every time.
+Create audit logs to monitor what changed and when.
+Keep multiple tables in sync (e.g., totals, status flags).
+Perform validations or restrictions before actions are allowed.
+
+CREATE TRIGGER trigger_name
+AFTER INSERT OR UPDATE OR DELETE ON table_name
+FOR EACH ROW
+BEGIN
+  -- SQL statements here (can include INSERT, UPDATE, etc.)
+END;
+
+| Event          | What It Means               |
+| -------------- | --------------------------- |
+| `AFTER INSERT` | After a new row is inserted |
+| `AFTER UPDATE` | After a row is updated      |
+| `AFTER DELETE` | After a row is deleted      |
+
+Logging Employee Deletions
+
+CREATE TABLE EmployeeLog (
+  emp_id INTEGER,
+  name TEXT,
+  deleted_at TEXT
+);
+
+CREATE TRIGGER log_employee_deletion
+AFTER DELETE ON Employee
+FOR EACH ROW
+BEGIN
+  INSERT INTO EmployeeLog(emp_id, name, deleted_at)
+  VALUES (OLD.emp_id, OLD.name, datetime('now'));
+END;
+
+
+ Auto-Update Salary Tracker
+
+ CREATE TABLE GradeChanges (
+  emp_id INTEGER,
+  old_grade TEXT,
+  new_grade TEXT,
+  changed_on TEXT
+);
+
+CREATE TRIGGER track_grade_change
+AFTER UPDATE ON Employee
+FOR EACH ROW
+WHEN OLD.grade != NEW.grade
+BEGIN
+  INSERT INTO GradeChanges(emp_id, old_grade, new_grade, changed_on)
+  VALUES (OLD.emp_id, OLD.grade, NEW.grade, datetime('now'));
+END;
+
+
+| Use Case                     | Trigger Function                            |
+| ---------------------------- | ------------------------------------------- |
+| Audit logs                   | Keep history of changes                     |
+| Auto-updating summary tables | Recalculate totals after data change        |
+| Cascading changes            | Auto-delete related rows in other tables    |
+| Validation enforcement       | Block certain actions unless conditions met |
+| Notification system          | Add rows to "to-do" table on insert/update  |
+
+
+Concepts Inside a Trigger
+OLD.column → Refers to the value before the change
+NEW.column → Refers to the value after the change
+Triggers can use IF, WHEN, and multiple SQL statements.
+
+BONUS TRIGGER : for both update and insert
+sqlite> create table bonus(
+(x1...> emp_id integer,
+(x1...> amount real); 
+
+sqlite> create trigger new_employee_bonus
+   ...> after insert on employee
+   ...> for each row
+   ...> when new.grade = 'A'
+   ...> begin
+   ...> insert into bonus(emp_id,amount)
+   ...> values (new.emp_id,10000);
+   ...> end;
+
+sqlite> create trigger update_employee_bonus
+   ...> after update on employee
+   ...> for each row
+   ...> when new.grade ='A' and old.grade !='A'
+   ...> begin
+   ...> insert into bonus(emp_id,amount)
+   ...> values (new.emp_id,10000);
+   ...> end;
+
+   
