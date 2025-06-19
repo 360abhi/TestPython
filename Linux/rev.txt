@@ -1,0 +1,69 @@
+Pwd: print working directory
+cd: change directory
+ls: list
+cat: get file contents
+rm: remove file
+cp src dest: copy file
+sudo adduser: add new user
+sudo useradd: add new user without configs
+which ls: location of the command
+whoami:user name
+ps: process running
+hostname: hostname
+ifconfig: network interfaces and their details
+lsblk:list blocks/hard drives
+lsusb: flash drives list
+lsof: open files
+man command:command help and options
+command -h or –help: brief options for that command
+apropos <hint> like usb: list commands related to usb
+
+
+
+File System:
+
+Everything in a linux os is a file including commands.
+All commands files are inside bin folder of the root, we can copy the command and rename it and use that command as a substitute for the original one.
+Dev folder in / has the devices. [ vda vda1 sda sda1 are the harddrives]
+config, nw files inside the etc folder
+media directory: shows the mounted files, like a flash drive
+mnt: the drive we manually mount are shown here
+users inside /etc/passwd
+password for users with x inside /etc/shadow
+
+We use shell to interact with the system, and the terminal emulator interacts with the shell
+bash is a shell for linux ,pwsh for windows(powershell)
+$ -> user and # -> root
+
+Managing users in Linux – sudo
+
+useradd : lazy user add
+adduser: add with all info [get its home dir and bash as shell and a password]
+sudo usermod username –shell  /bin/bash - ---> to change the bash of the username
+sudo usermod -l newname oldusername  -> to change the username of the user
+useradd newuser -m ---> to get the user its home directory by default
+sudo passwd user --> to change the password of the user
+su - user --> switch user
+** not every user can use the sudo command , only in the sudoers file can.
+** sudo visudo: edit the sudoers file
+sudo userdel user - -> delete the user
+sudo groupadd groupname  --.> adds a new group
+like users inside etc/passwd groups are inside /etc/group
+sudo usermod -aG groupname user  - > add user to the groupname
+sudo gpasswd -d user groupname - > del user from the group
+sudo groupdel groupname -> deletes the group not the users, so if the group had any permissions they are also lost
+
+
+Package Management Tools in Linux
+
+apt and dpkg : dpkg is low level package manager which installs tools but not dependencies, we’ve to take care of the dependencies first separately. Also dpkg uses the debian file downloaded while apt uses a repository and fetches the file from there.
+Apt update -> first update from the repo then apt install package to get the latest ones
+sudo apt edit-sources  -> to look the source of the packages and the repository
+sudo apt remove package  -> to remove the package but not the user data
+sudo apt purge package -> remove the package as well as the user data
+sudo apt update && sudo apt upgrade --> update and upgrade the packages installed
+pip3 install -r requirements.txt -> install the cloned repo tool requirements file
+git clone <url> -> clone the url from github to local machine
+
+Linux Services 
+

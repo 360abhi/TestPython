@@ -1,0 +1,65 @@
+| Command | Use                   |
+| ------- | --------------------- |
+| `ls`    | List files            |
+| `cd`    | Change directory      |
+| `touch` | Create file           |
+| `mkdir` | Make folder           |
+| `rm`    | Delete file/folder    |
+| `mv`    | Move or rename        |
+| `cp`    | Copy                  |
+| `cat`   | Print file            |
+| `less`  | View file with scroll |
+| `find`  | Search for files      |
+| `file`  | Type of file          |
+| `head`  | First lines           |
+| `tail`  | Last lines            |
+| `stat`  | File metadata         |
+
+🗂️ 1. ls — List directory contents
+Usage: ls
+Lists files in the current directory
+
+ls          # simple list
+ls -l       # long list (shows permissions, owner, date)
+ls -a       # includes hidden files (starting with .)
+ls -lh      # human-readable file sizes
+
+2. cd — Change Directory
+
+cd Documents       # go to Documents folder
+cd ..              # go one level up
+cd /etc            # go to absolute path
+cd ~               # go to home directory
+
+3. touch — Create an empty file
+
+touch file1.txt
+
+4.mkdir — Make a new directory
+
+mkdir myfolder
+mkdir -p a/b/c     # creates nested folders in one go
+
+5. rm — Remove (delete) file or directory
+
+rm file1.txt            # delete file
+rm -r foldername        # delete folder and its contents (recursive)
+rm -rf foldername       # force delete without prompt
+
+6.mv — Move or rename a file
+mv file1.txt folder/         # move file to folder
+mv old.txt new.txt           # rename file
+
+7. cp — Copy files or folders
+cp a.txt b.txt              # copy file
+cp -r folder1 folder2       # copy entire folder
+
+8. Cat: view file contents
+cat file.txt
+
+echo "Hello Linux!" > file1.txt
+cat file1.txt
+less file1.txt       # scrollable viewer
+head -n 5 file1.txt  # first 5 lines
+tail -n 5 file1.txt  # last 5 lines
+
