@@ -82,7 +82,7 @@ class Path_Utils:
                 return "NO ELEMENT FOUND"
             
     def append_screenshot(self,filename,element):
-            doc_path = f"{filename}.docx"
+            doc_path = f"/Output/{filename}.docx"
 
             img_url = element.get_attribute("src")
             response = requests.get(img_url)
