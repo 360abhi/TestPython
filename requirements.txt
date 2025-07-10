@@ -3,3 +3,6 @@ selenium
 requests
 webdrivermanager
 webdriver-manager
+pandas
+openpyxl
+python-docx
