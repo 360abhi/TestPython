@@ -1,8 +1,6 @@
 pytest
-selenium
 requests
-webdrivermanager
-webdriver-manager
+pytest-html
 pandas
 openpyxl
 python-docx
