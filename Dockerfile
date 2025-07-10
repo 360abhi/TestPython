@@ -8,4 +8,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 RUN mkdir -p /app/reports
 
-CMD ["pytest", "Pytest/concepts/first_test.py", "--html=reports/report.html", "--self-contained-html"]
+CMD ["pytest", "Pytest/concepts/tests/first_test.py", "--html=reports/report.html", "--self-contained-html"]
