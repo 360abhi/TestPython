@@ -1,0 +1,452 @@
+use studentDB;  // move to studentDB or create if it doesn't exists
+
+show collectons; // show all collections in the student databse
+db.getCollectionNames();
+
+db.createCollection("Department");
+db.Department.insertOne( { 'name':'abhishek'}) // it automatically creates the collection if it doesn't exists
+
+# Query
+db.student.find() // Gets all the objects from student collection
+
+# With filter
+db.student.find({age:22})
+db.student.findOne({name:"Bob"})
+
+# Projection : only some fields
+db.student.find({name:"Bob},{age:1,_id:0}) // 1->show 0->Hide // here only age field will be shown
+
+| Operator | Meaning               | Example                      |
+| -------- | --------------------- | ---------------------------- |
+| `$eq`    | Equal                 | `{ age: { $eq: 22 } }`       |
+| `$gt`    | Greater than          | `{ age: { $gt: 23 } }`       |
+| `$lt`    | Less than             | `{ age: { $lt: 25 } }`       |
+| `$gte`   | Greater than or equal | `{ age: { $gte: 22 } }`      |
+| `$lte`   | Less than or equal    | `{ age: { $lte: 25 } }`      |
+| `$ne`    | Not equal             | `{ age: { $ne: 22 } }`       |
+| `$in`    | In array              | `{ age: { $in: [22, 25] } }` |
+| `$nin`   | Not in array          | `{ age: { $nin: [22] } }`    |
+
+
+// Students with age greater than 22
+db.student.find({age:{$gt:22}})
+db.student.find({age:{$gt:23}})
+
+# Logical operators
+$and — All conditions true (default when you write multiple fields)
+$or — Any condition true
+$not — Negates condition
+$nor — None of the conditions true
+//find students whose name is Bob or age is 22
+db.student.find({ $or [{name:"Bob"},{age:22}]})
+
+
+# Sorting
+db.students.find().sort({age:1})  // 1-> ascending -1->descending
+
+# Limit and Skip
+db.students.find().limit(2) //only two
+db.students.find().skip(1) // skip first one 
+
+// top 3 oldest students
+db.student.find().sort({age:-1}).limit(3).skip()
+
+
+# RECAP
+
+> db.students.find()                              // Find all
+> db.students.find({ age: 22 })                   // Find age 22
+> db.students.findOne({ name: "Bob" })            // Find one by name
+> db.students.find({ age: { $gt: 22 } })          // Age > 22
+> db.students.find({ $or: [{ age: 22 }, { name: "Bob" }] })  // Age 22 or name Bob
+> db.students.find().sort({ age: -1 }).limit(3)   // Top 3 oldest students
+
+
+# Complex
+// all students with age greatere than 22 and coures mongodb
+> db.students.find({ $and : [ {age : {$gt :22}},{course:"mongo"}]}) is the same as
+> db.students.find({age:{$gt:22}},{course:"mongo"})
+
+we use $and when we need multiple conditions for the same key or for multiple logical operations
+> db.student.find({ $and : [{age:{$gt:22}},{age:{$lt:45}}]})
+> db.student.find({ $and : [
+	{$or: [{name:"bob"},{age:22}] },
+	{$and:[{name:"bob"}]}]})
+
+
+| Situation                                      | Do You Need `$and`? |
+| ---------------------------------------------- | ------------------- |
+| Multiple simple conditions on different fields | ❌ No                |
+| Multiple conditions on the **same field**      | ✅ Yes               |
+| Mixing `$or`, `$nor`, or complex logic         | ✅ Often Yes         |
+| For clarity in complex queries                 | ✅ Recommended       |
+
+
+
+> db.student.find({course: {$not:{$eq:"mongo"}}})
+			or
+> db.student.find({course: {$ne:"mongo"}})
+
+
+// Find students age 22 AND course MongoDB Basics
+db.students.find({ age: 22, course: "MongoDB Basics" })
+
+// Find students age 22 OR course Python
+db.students.find({ $or: [{ age: 22 }, { course: "Python" }] })
+
+// Find students (age 22 OR course Python) AND name starts with A
+db.students.find({
+  $and: [
+    { $or: [{ age: 22 }, { course: "Python" }] },
+    { name: /^A/ }
+  ]
+})
+
+// Find students NOT enrolled in Python
+db.students.find({ course: { $ne: "Python" } })
+
+// Find students neither age 22 nor course Python
+db.students.find({ $nor: [{ age: 22 }, { course: "Python" }] })
+
+# $IN
+
+> db.student.find({
+  age: { $in: [22, 25, 28] }
+  })
+
+> db.student.find({
+  courses: { $in: ["mongo", "express"] }
+  })
+
+
+## REGEX
+
+1) Literal characters
+ : /cat/ matches "a cat" "cats"
+> db.student.find({name: {$regex : /cat/ }})
+
+| Character | Meaning               |    |
+| --------- | --------------------- | -- |
+| `.`       | Any single character  |    |
+| `^`       | Start of string       |    |
+| `$`       | End of string         |    |
+| `*`       | 0 or more of previous |    |
+| `+`       | 1 or more of previous |    |
+| `?`       | 0 or 1 of previous    |    |
+| `[]`      | Character set         |    |
+| \`        | \`                    | OR |
+| `()`      | Grouping              |    |
+| `\`       | Escape next character |    |
+
+
+/c.t/ - > cat,cut,cbt
+/[cb]at/ - > cat,bat
+/[a-z]/ -> any lowercase alphabet
+/[^a-z]/ -> not lowercase alphabet
+
+# Quantifiers
+
+| Symbol  | Meaning                   | Example  | Matches             |
+| ------- | ------------------------- | -------- | ------------------- |
+| `*`     | 0 or more                 | `go*`    | `g`, `go`, `goo`    |
+| `+`     | 1 or more                 | `go+`    | `go`, `goo`, `gooo` |
+| `?`     | 0 or 1                    | `go?`    | `g`, `go`           |
+| `{n}`   | Exactly `n` times         | `a{3}`   | `aaa`               |
+| `{n,}`  | At least `n` times        | `a{2,}`  | `aa`, `aaa`, ...    |
+| `{n,m}` | Between `n` and `m` times | `a{2,4}` | `aa`, `aaa`, `aaaa` |
+
+
+# Anchors
+
+| Anchor | Description     | Example | Matches                |
+| ------ | --------------- | ------- | ---------------------- |
+| `^`    | Start of string | `^cat`  | `cat`, not `a cat`     |
+| `$`    | End of string   | `cat$`  | `a cat`, not `catfish` |
+
+
+# Alterication
+/dog|cat/ - > dog or cat
+
+| Pattern | Meaning                       |
+| ------- | ----------------------------- |
+| `\d`    | Digit `[0-9]`                 |
+| `\D`    | Non-digit                     |
+| `\w`    | Word character `[a-zA-Z0-9_]` |
+| `\W`    | Non-word character            |
+| `\s`    | Whitespace                    |
+| `\S`    | Non-whitespace                |
+
+
+db.users.find({ name: { $regex: /^A/ } })
+db.users.find({ email: { $regex: /\.com$/ } })
+
+🧠 Why \. instead of just .?
+In regex, a plain . means “any character”. But we don’t want that here. We literally want a dot (.), as in .com.
+To tell regex: “I mean a literal dot,” you escape it with a backslash: \.
+
+
+
+============== DAY-2 =================
+
+CRUD OPERATIONS:
+
+# Update documents
+
+db.users.updateOne({name:"Alice"},{$set:{age:28}})  // filter then update
+db.users.updateMany({age:{$lt:25}}, {$inc: {$age:1}}) // all ages less than 25 increment by 1
+
+| Operator  | Description         | Example                             |
+| --------- | ------------------- | ----------------------------------- |
+| `$set`    | Sets a field        | `{ $set: { age: 30 } }`             |
+| `$unset`  | Removes a field     | `{ $unset: { address: "" } }`       |
+| `$inc`    | Increments a number | `{ $inc: { age: 1 } }`              |
+| `$mul`    | Multiplies a number | `{ $mul: { age: 2 } }`              |
+| `$rename` | Renames a field     | `{ $rename: { name: "fullName" } }` |
+
+
+# Full document replace, all fields not mentioned will be removed
+
+> db.users.replaceOne({name:"Bob"},{name:"Rober",age:35})
+
+
+# Delete operations
+
+> db.users.deleteOne({name:"Bob"})
+> db.users.deleteMany({age: {$gt:25}})
+
+* use find().pretty() 
+
+Q): db.students.insertMany([
+  { name: "Amit", age: 21, marks: 78 },
+  { name: "Sneha", age: 20, marks: 82 },
+  { name: "Ravi", age: 22, marks: 69 },
+  { name: "Priya", age: 21, marks: 90 },
+  { name: "Karan", age: 23, marks: 55 }
+])
+
+
+Update Ravi's marks to 75.
+Increase marks by 5 for all students who scored less than 80.
+Remove any student who has marks below 60.
+Remove a single student who is 21 years old (just one match).
+
+// 1. Update Ravi's marks
+db.students.updateOne({ name: "Ravi" }, { $set: { marks: 75 } })
+
+// 2. Increase marks by 5 for students with marks < 80
+db.students.updateMany({ marks: { $lt: 80 } }, { $inc: { marks: 5 } })
+
+// 3. Delete students with marks < 60
+db.students.deleteMany({ marks: { $lt: 60 } })
+
+// 4. Delete one student aged 21
+db.students.deleteOne({ age: 21 })
+
+
+
+# INDEXES
+
+without indexes: collection scan (full scan)
+
+| Index Type         | Description                       |
+| ------------------ | --------------------------------- |
+| **Single Field**   | Indexes one field                 |
+| **Compound**       | Indexes multiple fields in order  |
+| **Multikey**       | For arrays                        |
+| **Text Index**     | For full-text search              |
+| **Hashed Index**   | For sharded collections           |
+| **Wildcard Index** | For dynamic or unknown fields     |
+| **TTL Index**      | For auto-deleting docs after time |
+
+> db.collection.createIndex({field:1}) 1->ascending (default) 2->descending
+
+# compound index
+
+> db.collection.createIndex({field:1,field2:-1})
+
+# unique index (no duplicates in the field)
+
+> db.users.createIndex({field:1},{unique:True})
+
+# text index (to perform text search operations
+
+> db.article.createIndex({content:"text"})
+> db.article.find({$text : { $search:"mongodb}}) // only if text index is created on any field of article 
+
+# TTL index (autodelete docs after sometime)
+
+> db.logs.createIndex({createdAt:1},{expiredAfterSeconds:3600})
+
+# Viewing indexes
+
+db.users.getiIndexes()
+db.users.getIndexes().forEach(index => printjson(index)) // visually
+
+# drop index
+> db.users.dropIndex(index)
+> db.users.dropIndexes() // drop all indexes
+
+# Aggregation pipelines
+
+An aggregation pipeline is a sequence of stages where each stage
+transforms the documents and passes the result to the next stage.
+Each stage performs a specific operation like filtering, grouping, projecting, or sorting.
+
+| Stage Operator | Description                                       |
+| -------------- | ------------------------------------------------- |
+| `$match`       | Filters documents (like a `find()` query)         |
+| `$group`       | Groups documents by a key and computes aggregates |
+| `$project`     | Reshapes documents, adds/removes fields           |
+| `$sort`        | Sorts documents                                   |
+| `$limit`       | Limits number of documents                        |
+| `$skip`        | Skips number of documents                         |
+| `$unwind`      | Deconstructs an array field to multiple docs      |
+| `$lookup`      | Performs a join with another collection           |
+
+
+{ "_id": 1, "product": "A", "quantity": 10, "price": 5 }
+{ "_id": 2, "product": "B", "quantity": 3, "price": 20 }
+{ "_id": 3, "product": "A", "quantity": 7, "price": 5 }
+
+db.orders.aggregate([
+  { $group: {
+      _id: "$product",
+      totalQuantity: { $sum: "$quantity" },
+      totalSales: { $sum: { $multiply: ["$quantity", "$price"] } }
+    }
+  }
+])
+
+
+db.orders.aggregate([
+  { $group: {
+      _id: "$product",
+      totalQuantity: { $sum: "$quantity" }
+    }
+  },
+  { $sort: { totalQuantity: -1 } }
+])
+
+db.orders.aggregate([
+  { $group: { _id: "$product", totalQuantity: { $sum: "$quantity" } } },
+  { $sort: { totalQuantity: -1 } },
+  { $skip: 1 },     // skip first document
+  { $limit: 2 }     // return next 2 documents
+])
+
+
+
+# Connect
+
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure
+
+class MongoDBClient:
+    def __init__(self, uri: str, db_name: str):
+        self.uri = uri
+        self.db_name = db_name
+        self.client = None
+        self.db = None
+
+    def connect(self):
+        try:
+            self.client = MongoClient(self.uri)
+            # Check connection
+            self.client.admin.command('ping')
+            self.db = self.client[self.db_name]
+            print(f"Connected to database: {self.db_name}")
+        except ConnectionFailure as e:
+            print(f"Failed to connect to MongoDB: {e}")
+
+    def get_collection(self, collection_name: str):
+        if self.db:
+            return self.db[collection_name]
+        else:
+            raise Exception("Database not connected.")
+
+    def close(self):
+        if self.client:
+            self.client.close()
+            print("MongoDB connection closed.")
+
+if __name__ == "__main__":
+    # Replace with your MongoDB URI
+    mongo_uri = "mongodb://localhost:27017"
+    database_name = "testdb"
+    collection_name = "users"
+
+    # Initialize client
+    mongo_client = MongoDBClient(mongo_uri, database_name)
+    mongo_client.connect()
+	
+    users = mongo_client.get_collection(collection_name)
+
+    # Insert a document
+    user_doc = {"name": "Alice", "age": 28}
+    insert_result = users.insert_one(user_doc)
+    print(f"Inserted document id: {insert_result.inserted_id}")
+
+    # Query documents
+    for user in users.find({"age": {"$gt": 25}}):
+        print(user)
+
+    # Close connection
+    mongo_client.close()
+
+
+***automation tests triggered by Jenkins, store results in MongoDB
+
+# lookup (joins)
+
+{ _id: 1, product: "A", customer_id: 101 }
+{ _id: 2, product: "B", customer_id: 102 }
+{ _id: 3, product: "C", customer_id: 101 }
+
+
+{ _id: 101, name: "Alice" }
+{ _id: 102, name: "Bob" }
+
+
+db.orders.aggregate([
+  {
+    $lookup: {
+      from: "customers",            // collection to join
+      localField: "customer_id",    // field in orders
+      foreignField: "_id",          // field in customers
+      as: "customer_info"           // output array field
+    }
+  }
+])
+
+=> output:
+
+[
+  {
+    _id: 1,
+    product: "A",
+    customer_id: 101,
+    customer_info: [{ _id: 101, name: "Alice" }]
+  },
+  {
+    _id: 2,
+    product: "B",
+    customer_id: 102,
+    customer_info: [{ _id: 102, name: "Bob" }]
+  },
+  {
+    _id: 3,
+    product: "C",
+    customer_id: 101,
+    customer_info: [{ _id: 101, name: "Alice" }]
+  }
+]
+
+
+
+    
+
+
+
+
+
+
